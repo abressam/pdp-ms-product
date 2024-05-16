@@ -2,6 +2,7 @@ import { ProductService } from '@app/modules/product/services/product.service';
 import { ProductControllerInterface } from '@app/modules/product/controllers/product.controller.interface';
 import { ErrorDto } from '@app/modules/session/dtos/error.dto';
 import { DeleteProductResDto } from '@app/modules/product/dtos/responses/delete-product-res.dto';
+import { GetAllProductsResDto } from '@app/modules/product/dtos/responses/get-all-products-res.dto';
 import { GetProductResDto } from '@app/modules/product/dtos/responses/get-product-res.dto';
 import { DeleteProductReqDto } from '@app/modules/product/dtos/requests/delete-product-req.dto';
 import { PutProductReqDto } from '@app/modules/product/dtos/requests/put-product-req.dto';
@@ -32,6 +33,33 @@ export class ProductController implements ProductControllerInterface {
   @Get('info')
   @HttpCode(200)
   @ApiBearerAuth('auth')
+  @ApiOperation({ summary: 'Get all products data' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns a JSON with all the products data',
+    type: GetAllProductsResDto,
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal server error',
+    type: ErrorDto,
+  })
+  async getAllProducts() {
+    const logger = new Logger(ProductController.name);
+
+    try {
+      logger.log('getAllProducts()');
+      return await this.productService.getAllProducts();
+    } catch (error) {
+      logger.error(error);
+      throw new HttpException(error.message, error.getStatus());
+    }
+  }
+
+  
+  @Get('info/{:id}')
+  @HttpCode(200)
+  @ApiBearerAuth('auth')
   @ApiOperation({ summary: 'Get the product data' })
   @ApiResponse({
     status: 200,
@@ -47,9 +75,9 @@ export class ProductController implements ProductControllerInterface {
     const logger = new Logger(ProductController.name);
 
     try {
-      const isAdmin = req['isAdmin'];
+      const productId = req['productId'];
       logger.log('getProduct()');
-      return await this.productService.getProduct(isAdmin);
+      return await this.productService.getProduct(productId);
     } catch (error) {
       logger.error(error);
       throw new HttpException(error.message, error.getStatus());
@@ -75,8 +103,9 @@ export class ProductController implements ProductControllerInterface {
 
     try {
       const isAdmin = req['isAdmin'];
+      const productId = req['productId'];
       logger.log('putProduct()');
-      return await this.productService.putProduct(isAdmin, body);
+      return await this.productService.putProduct(isAdmin, productId, body);
     } catch (error) {
       logger.error(error);
       throw new HttpException(error.message, error.getStatus());
