@@ -4,6 +4,7 @@ import { ErrorDto } from '@app/modules/session/dtos/error.dto';
 import { DeleteProductResDto } from '@app/modules/product/dtos/responses/delete-product-res.dto';
 import { GetAllProductsResDto } from '@app/modules/product/dtos/responses/get-all-products-res.dto';
 import { GetProductResDto } from '@app/modules/product/dtos/responses/get-product-res.dto';
+import { GetProductReqDto } from '@app/modules/product/dtos/requests/get-product-req.dto';
 import { DeleteProductReqDto } from '@app/modules/product/dtos/requests/delete-product-req.dto';
 import { PutProductReqDto } from '@app/modules/product/dtos/requests/put-product-req.dto';
 import {
@@ -57,7 +58,7 @@ export class ProductController implements ProductControllerInterface {
   }
 
   
-  @Get('info/{:id}')
+  @Get('info/:id')
   @HttpCode(200)
   @ApiBearerAuth('auth')
   @ApiOperation({ summary: 'Get the product data' })
@@ -71,11 +72,11 @@ export class ProductController implements ProductControllerInterface {
     description: 'Internal server error',
     type: ErrorDto,
   })
-  async getProduct(@Request() req: Request) {
+  async getProduct(@Param() params: GetProductReqDto) {
     const logger = new Logger(ProductController.name);
 
     try {
-      const productId = req['productId'];
+      const productId = params.id;
       logger.log('getProduct()');
       return await this.productService.getProduct(productId);
     } catch (error) {
@@ -103,7 +104,7 @@ export class ProductController implements ProductControllerInterface {
 
     try {
       const isAdmin = req['isAdmin'];
-      const productId = req['productId'];
+      const productId = body.id;
       logger.log('putProduct()');
       return await this.productService.putProduct(isAdmin, productId, body);
     } catch (error) {
