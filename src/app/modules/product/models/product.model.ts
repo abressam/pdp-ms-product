@@ -11,11 +11,14 @@ export class Product extends Model {
   @Column({ type: DataType.STRING, allowNull: false })
   brand: string;
 
-  @Column({ type: DataType.FLOAT, allowNull: false })
+  @Column({ type: DataType.DECIMAL, allowNull: false })
   price: number;
 
   @Column({ type: DataType.INTEGER, allowNull: false })
   quantity: number;
+
+  @Column({ type: DataType.BLOB, allowNull: false })
+  image: string;
 
   @Column({ type: DataType.STRING, allowNull: false })
   en_name: string;

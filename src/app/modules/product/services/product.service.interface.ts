@@ -8,8 +8,10 @@ export interface ProductServiceInterface {
   getProduct(productId: number): Promise<GetProductResDto>;
   putProduct(
     isAdmin: boolean,
-    productId: number,
     body: PutProductReqDto,
   ): Promise<GetProductResDto>;
-  deleteProduct(productId: number, isAdmin: boolean): Promise<DeleteProductResDto>;
+  deleteProduct(
+    productId: number,
+    isAdmin: boolean,
+  ): Promise<DeleteProductResDto>;
 }

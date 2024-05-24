@@ -18,51 +18,59 @@ export class RatingService implements RatingServiceInterface {
     const rating = await this.ratingModel.findAll();
     this.validateRating(rating[0]);
 
-    const ratingDtoArray = rating.map(rating => ({
-      id: rating.id,
+    const ratingDtoArray = rating.map((rating) => ({
       comment: rating.comment,
       grade: rating.grade,
-      productId: rating.fk_Product_id
+      productId: rating.fk_Product_id,
     }));
 
     return { rating: ratingDtoArray };
-       
   }
 
-  async getRating(productId: number): Promise<GetRatingResDto> {
-    const rating = await this.ratingModel.findByPk(productId)
-    this.validateRating(rating)
+  async getRating(userId: number, productId: number): Promise<GetRatingResDto> {
+    const rating = await this.ratingModel.findOne({
+      where: {
+        fk_Customer_id: userId,
+        fk_Product_id: productId,
+      },
+    });
+    this.validateRating(rating);
 
-    return { 
+    return {
       rating: {
-        id: rating.id,
         comment: rating.comment,
         grade: rating.grade,
-        productId: rating.fk_Product_id
-    } };
+        productId: rating.fk_Product_id,
+      },
+    };
   }
 
   async putRating(
-    ratingId: number,
+    userId: number,
     body: PutRatingReqDto,
   ): Promise<GetRatingResDto> {
-    const ratingOld = await this.ratingModel.findByPk(ratingId);
+    body['fk_Product_id'] = body.productId;
+    const ratingOld = await this.ratingModel.findOne({
+      where: {
+        fk_Customer_id: userId,
+        fk_Product_id: body.productId,
+      },
+    });
 
     let ratingNew: Rating;
 
     if (ratingOld) {
-
       ratingNew = Object.assign({}, ratingOld.dataValues, body);
 
-      await this.ratingModel.update({
-          id: ratingNew.id,
+      await this.ratingModel.update(
+        {
           comment: ratingNew.comment,
           grade: ratingNew.grade,
-          productId: ratingNew.fk_Product_id,
         },
         {
           where: {
-            id: ratingOld.fk_Product_id,
+            fk_Customer_id: userId,
+            fk_Product_id: ratingOld.fk_Product_id,
           },
         },
       );
@@ -70,25 +78,32 @@ export class RatingService implements RatingServiceInterface {
       this.validateInsert(body);
 
       ratingNew = await this.ratingModel.create({
-        id: body.id,
         comment: body.comment,
         grade: body.grade,
-        productId: body.productId,
+        fk_Customer_id: userId,
+        fk_Product_id: body.productId,
       });
     }
 
-    return { 
+    return {
       rating: {
-        id: ratingNew.id,
         comment: ratingNew.comment,
         grade: ratingNew.grade,
         productId: ratingNew.fk_Product_id,
       },
-     };
+    };
   }
 
-  async deleteRating(ratingId: number): Promise<DeleteRatingResDto> {
-    const rating = await this.ratingModel.findByPk(ratingId);
+  async deleteRating(
+    userId: number,
+    productId: number,
+  ): Promise<DeleteRatingResDto> {
+    const rating = await this.ratingModel.findOne({
+      where: {
+        fk_Customer_id: userId,
+        fk_Product_id: productId,
+      },
+    });
 
     this.validateRating(rating);
 
@@ -101,7 +116,7 @@ export class RatingService implements RatingServiceInterface {
   }
 
   private validateInsert(body: PutRatingReqDto) {
-    const emptyFields = Object.keys(body).length !== 9;
+    const emptyFields = Object.keys(body).length !== 4;
 
     if (emptyFields) {
       throw new HttpException(

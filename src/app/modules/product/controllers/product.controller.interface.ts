@@ -8,12 +8,9 @@ import { PutProductReqDto } from '@app/modules/product/dtos/requests/put-product
 export interface ProductControllerInterface {
   getAllProducts(): Promise<GetAllProductsResDto>;
   getProduct(params: GetProductReqDto): Promise<GetProductResDto>;
-  putProduct(
-    body: PutProductReqDto,
-    req: Request,
-  ): Promise<GetProductResDto>;
+  putProduct(body: PutProductReqDto, req: Request): Promise<GetProductResDto>;
   deleteProduct(
     params: DeleteProductReqDto,
-    req: Request
+    req: Request,
   ): Promise<DeleteProductResDto>;
 }

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNumber, IsOptional } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsBase64 } from 'class-validator';
 
 export class PutProductReqDto {
   @ApiProperty()
@@ -21,6 +21,11 @@ export class PutProductReqDto {
   @IsNumber()
   @IsOptional()
   quantity?: number;
+
+  @ApiProperty()
+  @IsBase64()
+  @IsOptional()
+  image?: string;
 
   @ApiProperty()
   @IsString()

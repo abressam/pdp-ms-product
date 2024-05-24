@@ -57,7 +57,6 @@ export class RatingController implements RatingControllerInterface {
     }
   }
 
-  
   @Get('info/:id')
   @HttpCode(200)
   @ApiBearerAuth('auth')
@@ -72,13 +71,14 @@ export class RatingController implements RatingControllerInterface {
     description: 'Internal server error',
     type: ErrorDto,
   })
-  async getRating(@Param() params: GetRatingReqDto) {
+  async getRating(@Param() params: GetRatingReqDto, @Request() req: Request) {
     const logger = new Logger(RatingController.name);
 
     try {
+      const userId = req['userId'];
       const productId = params.id;
       logger.log('getRating()');
-      return await this.ratingService.getRating(productId);
+      return await this.ratingService.getRating(userId, productId);
     } catch (error) {
       logger.error(error);
       throw new HttpException(error.message, error.getStatus());
@@ -99,13 +99,13 @@ export class RatingController implements RatingControllerInterface {
     description: 'Internal server error',
     type: ErrorDto,
   })
-  async putRating(@Body() body: PutRatingReqDto, @Param() params: PutRatingReqDto) {
+  async putRating(@Body() body: PutRatingReqDto, @Request() req: Request) {
     const logger = new Logger(RatingController.name);
 
     try {
-      const productId = params.id;
+      const userId = req['userId'];
       logger.log('putRating()');
-      return await this.ratingService.putRating(productId, body);
+      return await this.ratingService.putRating(userId, body);
     } catch (error) {
       logger.error(error);
       throw new HttpException(error.message, error.getStatus());
@@ -126,13 +126,17 @@ export class RatingController implements RatingControllerInterface {
     description: 'Internal server error',
     type: ErrorDto,
   })
-  async deleteProduct(@Param() params: DeleteRatingReqDto) {
+  async deleteProduct(
+    @Param() params: DeleteRatingReqDto,
+    @Request() req: Request,
+  ) {
     const logger = new Logger(RatingController.name);
 
     try {
+      const userId = req['userId'];
       const productId = params.id;
       logger.log('deleteProduct()');
-      return await this.ratingService.deleteRating(productId);
+      return await this.ratingService.deleteRating(userId, productId);
     } catch (error) {
       logger.error(error);
       throw new HttpException(error.message, error.getStatus());

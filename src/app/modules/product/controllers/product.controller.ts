@@ -57,7 +57,6 @@ export class ProductController implements ProductControllerInterface {
     }
   }
 
-  
   @Get('info/:id')
   @HttpCode(200)
   @ApiBearerAuth('auth')
@@ -104,9 +103,8 @@ export class ProductController implements ProductControllerInterface {
 
     try {
       const isAdmin = req['isAdmin'];
-      const productId = body.id;
       logger.log('putProduct()');
-      return await this.productService.putProduct(isAdmin, productId, body);
+      return await this.productService.putProduct(isAdmin, body);
     } catch (error) {
       logger.error(error);
       throw new HttpException(error.message, error.getStatus());
@@ -127,7 +125,10 @@ export class ProductController implements ProductControllerInterface {
     description: 'Internal server error',
     type: ErrorDto,
   })
-  async deleteProduct(@Param() params: DeleteProductReqDto, @Request() req: Request) {
+  async deleteProduct(
+    @Param() params: DeleteProductReqDto,
+    @Request() req: Request,
+  ) {
     const logger = new Logger(ProductController.name);
 
     try {

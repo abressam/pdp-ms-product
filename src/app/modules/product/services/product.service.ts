@@ -15,30 +15,36 @@ export class ProductService implements ProductServiceInterface {
   ) {}
 
   async getAllProducts(): Promise<GetAllProductsResDto> {
-    const product = await this.productModel.findAll();
-    this.validateProduct(product[0]);
+    const products = await this.productModel.findAll();
+    this.validateProduct(products[0]);
 
-    return { product };
+    return {
+      product: products.map((product) => {
+        product.image = Buffer.from(product.image, 'base64').toString('ascii');
+        return product;
+      }),
+    };
   }
 
   async getProduct(productId: number): Promise<GetProductResDto> {
-    const product = await this.productModel.findByPk(productId)
-    this.validateProduct(product)
+    const product = await this.productModel.findByPk(productId);
+    this.validateProduct(product);
 
-    return { product }
+    product.image = Buffer.from(product.image, 'base64').toString('ascii');
+    return { product };
   }
 
   async putProduct(
     isAdmin: boolean,
-    productId: number,
     body: PutProductReqDto,
   ): Promise<GetProductResDto> {
-    const productOld = await this.productModel.findByPk(productId);
+    this.validateAuth(isAdmin);
+
+    const productOld = await this.productModel.findByPk(body.id);
 
     let productNew: Product;
 
     if (productOld) {
-
       productNew = Object.assign({}, productOld.dataValues, body);
 
       await this.productModel.update(
@@ -46,12 +52,13 @@ export class ProductService implements ProductServiceInterface {
           brand: productNew.brand,
           price: productNew.price,
           quantity: productNew.quantity,
+          image: productNew.image,
           en_name: productNew.en_name,
           pt_name: productNew.pt_name,
           en_type: productNew.en_type,
           pt_type: productNew.pt_type,
           en_desc: productNew.en_desc,
-          pt_desc: productNew.pt_desc
+          pt_desc: productNew.pt_desc,
         },
         {
           where: {
@@ -66,33 +73,38 @@ export class ProductService implements ProductServiceInterface {
         brand: body.brand,
         price: body.price,
         quantity: body.quantity,
+        image: body.image,
         en_name: body.en_name,
         pt_name: body.pt_name,
         en_type: body.en_type,
         pt_type: body.pt_type,
         en_desc: body.en_desc,
-        pt_desc: body.pt_desc
+        pt_desc: body.pt_desc,
       });
     }
 
-    return { 
+    return {
       product: {
         id: productNew.id,
         brand: productNew.brand,
         price: productNew.price,
         quantity: productNew.quantity,
+        image: productNew.image,
         en_name: productNew.en_name,
         pt_name: productNew.pt_name,
         en_type: productNew.en_type,
         pt_type: productNew.pt_type,
         en_desc: productNew.en_desc,
-        pt_desc: productNew.pt_desc
+        pt_desc: productNew.pt_desc,
       },
-     };
+    };
   }
 
-  async deleteProduct(productId: number, isAdmin: boolean): Promise<DeleteProductResDto> {
-    this.validateAuth(isAdmin)
+  async deleteProduct(
+    productId: number,
+    isAdmin: boolean,
+  ): Promise<DeleteProductResDto> {
+    this.validateAuth(isAdmin);
 
     const product = await this.productModel.findByPk(productId);
 
@@ -107,7 +119,7 @@ export class ProductService implements ProductServiceInterface {
   }
 
   private validateInsert(body: PutProductReqDto) {
-    const emptyFields = Object.keys(body).length !== 9;
+    const emptyFields = Object.keys(body).length !== 10;
 
     if (emptyFields) {
       throw new HttpException(
@@ -125,7 +137,7 @@ export class ProductService implements ProductServiceInterface {
 
   private validateAuth(isAdmin: boolean) {
     if (!isAdmin) {
-      throw new HttpException('Unable to delete product', HttpStatus.UNAUTHORIZED);
+      throw new HttpException('Invalid session', HttpStatus.UNAUTHORIZED);
     }
   }
 }

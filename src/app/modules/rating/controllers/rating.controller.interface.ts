@@ -7,14 +7,10 @@ import { PutRatingReqDto } from '@app/modules/rating/dtos/requests/put-rating-re
 
 export interface RatingControllerInterface {
   getAllRating(): Promise<GetAllRatingResDto>;
-  getRating(
-    params: GetRatingReqDto
-  ): Promise<GetRatingResDto>;
-  putRating(
-    body: PutRatingReqDto,
-    params: PutRatingReqDto
-  ): Promise<GetRatingResDto>;
+  getRating(params: GetRatingReqDto, req: Request): Promise<GetRatingResDto>;
+  putRating(body: PutRatingReqDto, req: Request): Promise<GetRatingResDto>;
   deleteProduct(
-    params: DeleteRatingReqDto
+    params: DeleteRatingReqDto,
+    req: Request,
   ): Promise<DeleteRatingResDto>;
 }

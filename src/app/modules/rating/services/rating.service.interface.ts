@@ -5,10 +5,7 @@ import { GetRatingResDto } from '@app/modules/rating//dtos/responses/get-rating-
 
 export interface RatingServiceInterface {
   getAllRating(): Promise<GetAllRatingResDto>;
-  getRating(productId: number): Promise<GetRatingResDto>;
-  putRating(
-    ratingId: number,
-    body: PutRatingReqDto,
-  ): Promise<GetRatingResDto>;
-  deleteRating(ratingId: number): Promise<DeleteRatingResDto>;
+  getRating(userId: number, productId: number): Promise<GetRatingResDto>;
+  putRating(userId: number, body: PutRatingReqDto): Promise<GetRatingResDto>;
+  deleteRating(userId: number, productId: number): Promise<DeleteRatingResDto>;
 }
