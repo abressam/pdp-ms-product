@@ -99,8 +99,8 @@ export class ProductService implements ProductServiceInterface {
   }
 
   async deleteProduct(
-    productId: number,
     isAdmin: boolean,
+    productId: number,
   ): Promise<DeleteProductResDto> {
     this.validateAuth(isAdmin);
 

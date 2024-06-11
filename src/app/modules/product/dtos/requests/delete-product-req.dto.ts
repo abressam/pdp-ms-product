@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsNotEmpty } from 'class-validator';
+import { IsNumberString, IsNotEmpty } from 'class-validator';
 
 export class DeleteProductReqDto {
   @ApiProperty()
-  @IsNumber()
+  @IsNumberString()
   @IsNotEmpty()
   id: number;
 }

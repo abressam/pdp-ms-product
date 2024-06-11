@@ -125,17 +125,14 @@ export class ProductController implements ProductControllerInterface {
     description: 'Internal server error',
     type: ErrorDto,
   })
-  async deleteProduct(
-    @Param() params: DeleteProductReqDto,
-    @Request() req: Request,
-  ) {
+  async deleteProduct(@Param() params: DeleteProductReqDto, @Request() req: Request) {
     const logger = new Logger(ProductController.name);
 
     try {
       const productId = params.id;
       const isAdmin = req['isAdmin'];
       logger.log('deleteProduct()');
-      return await this.productService.deleteProduct(productId, isAdmin);
+      return await this.productService.deleteProduct(isAdmin, productId);
     } catch (error) {
       logger.error(error);
       throw new HttpException(error.message, error.getStatus());

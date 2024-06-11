@@ -11,7 +11,7 @@ export interface ProductServiceInterface {
     body: PutProductReqDto,
   ): Promise<GetProductResDto>;
   deleteProduct(
-    productId: number,
     isAdmin: boolean,
+    productId: number,
   ): Promise<DeleteProductResDto>;
 }
