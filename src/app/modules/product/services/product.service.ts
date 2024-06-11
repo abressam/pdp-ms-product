@@ -20,7 +20,6 @@ export class ProductService implements ProductServiceInterface {
 
     return {
       product: products.map((product) => {
-        product.image = Buffer.from(product.image, 'base64').toString('ascii');
         return product;
       }),
     };
@@ -30,7 +29,6 @@ export class ProductService implements ProductServiceInterface {
     const product = await this.productModel.findByPk(productId);
     this.validateProduct(product);
 
-    product.image = Buffer.from(product.image, 'base64').toString('ascii');
     return { product };
   }
 
