@@ -24,7 +24,10 @@ import dbConfig from '@app/configs/db.config';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(SessionMiddleware).forRoutes(ProductController);
+    consumer
+    .apply(SessionMiddleware)
+    .exclude('/product/info', '/product/info/:id')
+    .forRoutes(ProductController);
     consumer.apply(SessionMiddleware).forRoutes(RatingController)
   }
 }
