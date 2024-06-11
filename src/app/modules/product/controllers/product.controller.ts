@@ -33,7 +33,6 @@ export class ProductController implements ProductControllerInterface {
 
   @Get('info')
   @HttpCode(200)
-  @ApiBearerAuth('auth')
   @ApiOperation({ summary: 'Get all products data' })
   @ApiResponse({
     status: 200,
@@ -59,7 +58,6 @@ export class ProductController implements ProductControllerInterface {
 
   @Get('info/:id')
   @HttpCode(200)
-  @ApiBearerAuth('auth')
   @ApiOperation({ summary: 'Get the product data' })
   @ApiResponse({
     status: 200,

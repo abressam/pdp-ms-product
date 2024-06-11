@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { HealthcheckModule } from '@app/modules/healthcheck/healthcheck.module';
 import { SessionMiddleware } from '@app/modules/session/middlewares/session.middleware';
 import { ProductModule } from '@app/modules/product/product.module';
@@ -26,8 +26,12 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
     .apply(SessionMiddleware)
-    .exclude('/product/info', '/product/info/:id')
+    .exclude(
+      { path: '/product/info', method: RequestMethod.GET },
+      { path: '/product/info/:id', method: RequestMethod.GET }
+    )
     .forRoutes(ProductController);
+
     consumer.apply(SessionMiddleware).forRoutes(RatingController)
   }
 }
