@@ -60,7 +60,7 @@ export class ProductService implements ProductServiceInterface {
         },
         {
           where: {
-            id: isAdmin,
+            id: body.id,
           },
         },
       );
