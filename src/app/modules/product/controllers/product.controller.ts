@@ -12,6 +12,7 @@ import {
   ApiResponse,
   ApiTags,
   ApiBearerAuth,
+  ApiQuery,
 } from '@nestjs/swagger';
 import {
   Controller,
@@ -24,6 +25,7 @@ import {
   HttpCode,
   HttpException,
   Logger,
+  Query,
 } from '@nestjs/common';
 
 @ApiTags('product')
@@ -44,12 +46,15 @@ export class ProductController implements ProductControllerInterface {
     description: 'Internal server error',
     type: ErrorDto,
   })
-  async getAllProducts() {
+  @ApiQuery({ name: 'type', required: false, description: 'Product type' })
+  async getAllProducts(
+    @Query('type') type?: string
+  ) {
     const logger = new Logger(ProductController.name);
 
     try {
       logger.log('getAllProducts()');
-      return await this.productService.getAllProducts();
+      return await this.productService.getAllProducts(type);
     } catch (error) {
       logger.error(error);
       throw new HttpException(error.message, error.getStatus());

@@ -4,7 +4,7 @@ import { PutProductReqDto } from '@app/modules/product/dtos/requests/put-product
 import { GetProductResDto } from '@app/modules/product//dtos/responses/get-product-res.dto';
 
 export interface ProductServiceInterface {
-  getAllProducts(isAdmin: boolean): Promise<GetAllProductsResDto>;
+  getAllProducts(type?: string): Promise<GetAllProductsResDto>;
   getProduct(productId: number): Promise<GetProductResDto>;
   putProduct(
     isAdmin: boolean,

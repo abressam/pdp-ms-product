@@ -14,8 +14,13 @@ export class ProductService implements ProductServiceInterface {
     private productModel: typeof Product,
   ) {}
 
-  async getAllProducts(): Promise<GetAllProductsResDto> {
-    const products = await this.productModel.findAll();
+  async getAllProducts(type?: string): Promise<GetAllProductsResDto> {
+    const queryOptions: any = {};
+    if (type) {
+      queryOptions.where = { pt_type: type };
+    }
+
+    const products = await this.productModel.findAll(queryOptions);
     this.validateProduct(products[0]);
 
     return {
